@@ -27,6 +27,51 @@ jobs:
           channel: 'stable'
           cache: true
 
+      - name: Ensure pubspec.yaml Exists
+        run: |
+          if [ ! -f pubspec.yaml ]; then
+            cat << 'SPEC_EOF' > pubspec.yaml
+          name: emetrology_inspector
+          description: Statutory Compliance Audit Engine.
+          publish_to: 'none'
+          version: 1.0.0+1
+
+          environment:
+            sdk: '>=3.3.0 <4.0.0'
+
+          dependencies:
+            flutter:
+              sdk: flutter
+            cupertino_icons: ^1.0.8
+            camera: ^0.11.0
+            google_mlkit_text_recognition: ^0.14.0
+            google_mlkit_barcode_scanning: ^0.13.0
+            pdf: ^3.11.1
+            printing: ^5.13.2
+            intl: ^0.19.0
+            path_provider: ^2.1.2
+
+          dev_dependencies:
+            flutter_test:
+              sdk: flutter
+            flutter_lints: ^3.0.0
+
+          flutter:
+            uses-material-design: true
+          SPEC_EOF
+          fi
+
+      - name: Scaffold Android Project
+        run: |
+          if [ ! -d android ]; then
+            mkdir -p /tmp/main_backup
+            [ -f lib/main.dart ] && cp lib/main.dart /tmp/main_backup/main.dart
+            flutter create . --project-name emetrology --org gov.in.dca.emetrology --platforms=android
+            [ -f /tmp/main_backup/main.dart ] && cp /tmp/main_backup/main.dart lib/main.dart
+            sed -i 's|<application|<uses-permission android:name="android.permission.CAMERA"/>\n    <application|' android/app/src/main/AndroidManifest.xml
+            sed -i 's/minSdkVersion flutter.minSdkVersion/minSdkVersion 21/g' android/app/build.gradle 2>/dev/null || sed -i 's/minSdk = flutter.minSdkVersion/minSdk = 21/g' android/app/build.gradle.kts 2>/dev/null || true
+          fi
+
       - name: Fetch Dependencies
         run: flutter pub get
 
