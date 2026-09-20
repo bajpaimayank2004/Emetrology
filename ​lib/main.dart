@@ -339,7 +339,6 @@ class _InspectorHomeScreenState extends State<InspectorHomeScreen> {
           imagePixelHeight = previewSize.width.toInt();
         }
       } else {
-        // Fallback for emulator or uninitialized camera sensor
         imagePath = '';
       }
 
@@ -384,7 +383,7 @@ class _InspectorHomeScreenState extends State<InspectorHomeScreen> {
       _executeStatutoryAudit(recognizedText);
 
       setState(() {
-        _currentStep = 2; // Transition to audit dashboard
+        _currentStep = 2;
       });
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -418,7 +417,6 @@ class _InspectorHomeScreenState extends State<InspectorHomeScreen> {
 
     final String text = ocr.text;
 
-    // 1. Rule 6(1)(e): Maximum Retail Price (MRP)
     final mrpRegex = RegExp(
       r'(?:MRP|M\.R\.P\.|MAX\.?\s*RETAIL\s*PRICE)[^0-9]*([₹Rs\.]*\s*[0-9]+(?:\.[0-9]{1,2})?)',
       caseSensitive: false,
@@ -454,7 +452,6 @@ class _InspectorHomeScreenState extends State<InspectorHomeScreen> {
       ));
     }
 
-    // 2. Rule 6(1)(b) & Rule 12: Net Quantity with Standard Units
     final netQtyRegex = RegExp(
       r'(?:NET\s*(?:WT|WEIGHT|QTY|QUANTITY)?[\s:\.\-]*|^)?([0-9]+(?:\.[0-9]+)?\s*(?:g|kg|ml|l|mg|gm|grams?|litres?|units?|N))\b',
       caseSensitive: false,
@@ -490,7 +487,6 @@ class _InspectorHomeScreenState extends State<InspectorHomeScreen> {
       ));
     }
 
-    // 3. Rule 6(11): Unit Sale Price (USP)
     final uspRegex = RegExp(
       r'(?:USP|UNIT\s*SALE\s*PRICE)[\s:\.\-]*[₹Rs\.]*\s*([0-9]+(?:\.[0-9]{1,2})?\s*(?:per|\/)\s*(?:g|kg|ml|l|unit|piece|N))',
       caseSensitive: false,
@@ -522,7 +518,6 @@ class _InspectorHomeScreenState extends State<InspectorHomeScreen> {
       ));
     }
 
-    // 4. Rule 6(1)(d): Month and Year of Manufacture / Packing
     final dateRegex = RegExp(
       r'(?:MFD|MFG|PACKED|PKD|DATE)[\s:\.\-]*([0-9]{1,2}[\/\-\.][0-9]{2,4}|[A-Za-z]{3,9}\s*[0-9]{2,4})',
       caseSensitive: false,
@@ -553,7 +548,6 @@ class _InspectorHomeScreenState extends State<InspectorHomeScreen> {
       ));
     }
 
-    // 5. Rule 6(1)(n): Consumer Care Cell & Redressal Mechanism
     final careRegex = RegExp(
       r'(?:CUSTOMER|CONSUMER|CARE|HELPLINE|FEEDBACK)[^:\n]*[:\s]+([0-9\s\-]{6,15}|[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,})',
       caseSensitive: false,
@@ -584,7 +578,6 @@ class _InspectorHomeScreenState extends State<InspectorHomeScreen> {
       ));
     }
 
-    // 6. Rule 6(1)(a): Manufacturer / Packer Name and Address
     final mfrRegex = RegExp(
       r'(?:MFG\s*BY|MANUFACTURED\s*BY|PACKED\s*BY|MKT\s*BY|MARKETED\s*BY)[\s:\.\-]*([^\n\r]{10,80})',
       caseSensitive: false,
@@ -919,6 +912,7 @@ class _InspectorHomeScreenState extends State<InspectorHomeScreen> {
             child: const Center(
               child: Column(
                 mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Icon(Icons.videocam_off_outlined, color: Colors.white54, size: 54),
                   SizedBox(height: 12),
@@ -930,8 +924,6 @@ class _InspectorHomeScreenState extends State<InspectorHomeScreen> {
               ),
             ),
           ),
-
-        /* Optical reticle overlay */
         Positioned.fill(
           child: CustomPaint(
             painter: ReticleOverlayPainter(
@@ -939,8 +931,6 @@ class _InspectorHomeScreenState extends State<InspectorHomeScreen> {
             ),
           ),
         ),
-
-        /* Header Information Banner */
         Positioned(
           top: 16,
           left: 16,
@@ -984,8 +974,6 @@ class _InspectorHomeScreenState extends State<InspectorHomeScreen> {
             ),
           ),
         ),
-
-        /* Action Buttons */
         Positioned(
           bottom: 24,
           left: 24,
@@ -1022,6 +1010,7 @@ class _InspectorHomeScreenState extends State<InspectorHomeScreen> {
       return Center(
         child: Column(
           mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
             const Icon(Icons.pending_actions_outlined, size: 64, color: Colors.grey),
             const SizedBox(height: 12),
@@ -1057,7 +1046,6 @@ class _InspectorHomeScreenState extends State<InspectorHomeScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          /* Summary Verdict Card */
           Card(
             elevation: 1,
             color: nonCompliantCount > 0
@@ -1129,20 +1117,14 @@ class _InspectorHomeScreenState extends State<InspectorHomeScreen> {
               ),
             ),
           ),
-
           const SizedBox(height: 16),
           const Text(
             'Itemised Statutory Rule Declarations',
             style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Color(0xFF0F3D3E)),
           ),
           const SizedBox(height: 8),
-
-          /* Audit findings list */
           ..._auditResults.map((finding) => _buildFindingCard(finding)),
-
           const SizedBox(height: 16),
-
-          /* Action Buttons for Memorandum Export */
           FilledButton.icon(
             style: FilledButton.styleFrom(
               backgroundColor: const Color(0xFF0F3D3E),
@@ -1362,7 +1344,6 @@ class _InspectorHomeScreenState extends State<InspectorHomeScreen> {
         margin: const pw.EdgeInsets.all(32),
         build: (pw.Context pdfContext) {
           return [
-            /* Government / Statutory Header */
             pw.Center(
               child: pw.Column(
                 children: [
@@ -1388,8 +1369,6 @@ class _InspectorHomeScreenState extends State<InspectorHomeScreen> {
             ),
             pw.Divider(thickness: 1.5),
             pw.SizedBox(height: 8),
-
-            /* Inspection Parameters Metadata */
             pw.Row(
               mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
               children: [
@@ -1417,12 +1396,9 @@ class _InspectorHomeScreenState extends State<InspectorHomeScreen> {
               ],
             ),
             pw.SizedBox(height: 14),
-
-            /* Table of Statutory Rule Violations and Findings */
             pw.Text('ITEMISED STATUTORY AUDIT FINDINGS (RULE 6 DECLARATIONS):',
                 style: pw.TextStyle(fontSize: 10, fontWeight: pw.FontWeight.bold)),
             pw.SizedBox(height: 6),
-
             pw.TableHelper.fromTextArray(
               headers: ['Statutory Rule', 'Citation', 'Detected Text', 'Opt. Ht.', 'Req.', 'Status'],
               headerStyle: pw.TextStyle(fontSize: 8, fontWeight: pw.FontWeight.bold, color: PdfColors.white),
@@ -1443,10 +1419,7 @@ class _InspectorHomeScreenState extends State<InspectorHomeScreen> {
                 ];
               }).toList(),
             ),
-
             pw.SizedBox(height: 16),
-
-            /* Inspector Conclusions & Legal Directives */
             pw.Container(
               padding: const pw.EdgeInsets.all(10),
               decoration: pw.BoxDecoration(
@@ -1470,10 +1443,7 @@ class _InspectorHomeScreenState extends State<InspectorHomeScreen> {
                 ],
               ),
             ),
-
             pw.SizedBox(height: 36),
-
-            /* Signatures */
             pw.Row(
               mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
               children: [
@@ -1534,10 +1504,8 @@ class ReticleOverlayPainter extends CustomPainter {
       height: rectHeight,
     );
 
-    // Bounding Frame
     canvas.drawRect(rect, paint);
 
-    // Corner guides
     const double cornerLen = 24.0;
     canvas.drawLine(rect.topLeft, rect.topLeft + const Offset(cornerLen, 0), cornerPaint);
     canvas.drawLine(rect.topLeft, rect.topLeft + const Offset(0, cornerLen), cornerPaint);
@@ -1551,7 +1519,6 @@ class ReticleOverlayPainter extends CustomPainter {
     canvas.drawLine(rect.bottomRight, rect.bottomRight + const Offset(-cornerLen, 0), cornerPaint);
     canvas.drawLine(rect.bottomRight, rect.bottomRight + const Offset(0, -cornerLen), cornerPaint);
 
-    // Center crosshair
     final centerCrossPaint = Paint()
       ..color = Colors.white.withOpacity(0.5)
       ..strokeWidth = 1.0;
